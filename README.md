@@ -37,6 +37,9 @@ python -m htcsignet.wd.test -m cnn_vit --model-path <path/to/trained_model> \
     --exp-users 0 300 --dev-users 0 300 --gen-for-train 12
 ```
 
+## Weight Sharing
+https://musetransfer.com/s/pyni3bmws
+
 
 ## Reference
 [1] Hafemann, Luiz G., Robert Sabourin, and Luiz S. Oliveira. "Learning Features for Offline Handwritten Signature Verification using Deep Convolutional Neural Networks" http://dx.doi.org/10.1016/j.patcog.2017.05.012 ([preprint](https://arxiv.org/abs/1705.05787))
