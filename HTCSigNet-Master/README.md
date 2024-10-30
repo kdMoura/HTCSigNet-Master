@@ -1,3 +1,4 @@
+# HTCSigNet
 # Usage
 
 ## Data preprocessing
@@ -22,8 +23,8 @@ During training a random crop of size 256x256 is taken for each iteration. Durin
 Training HTCSigNet with lambda=0.95:
 
 ```
-python -m htcsignet.featurelearning.cnn_vit_train --model cnn_vitcnn_vit --dataset-path  <data.npz> --users [first last]\ 
---model cnn_vit --epochs 100 --forg --lamb 0.95 --logdir signet_f_lamb0.95  
+python -m htcsignet.featurelearning.htcsignet_train_train --model htcsignet --dataset-path  <data.npz> --users [first last]\
+--epochs 100 --forg --lamb 0.95 --logdir ../../htcsignet_lr_0.95  
 ```
 
 ## Training WD classifiers and evaluating the result
@@ -31,10 +32,12 @@ python -m htcsignet.featurelearning.cnn_vit_train --model cnn_vitcnn_vit --datas
 For training and testing the WD classifiers, use the ```htcsignet.wd.test``` script. Example:
 
 ```bash
-python -m htcsignet.wd.test -m cnn_vit --model-path <path/to/trained_model> \
-    --data-path <path/to/data> --save-path <path/to/save> \
-    --exp-users 0 300 --dev-users 0 300 --gen-for-train 12
+python -m htcsignet.wd.htcsignet_wd_test -m htcsignet --model-path <path/to/trained_model> \
+    --data-path <path/to/data>  --exp-users 0 300 --dev-users 0 300 --gen-for-train 12
 ```
+
+## Weight Sharing
+https://musetransfer.com/s/pyni3bmws
 
 
 ## Reference
