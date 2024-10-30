@@ -1,6 +1,6 @@
 from .vit import vit_base_patch16_224_in21k
 
-from .cnn_vit_sig import SigTransformer as htcsignet
+from .htcsignet import SigTransformer as htcsignet
 
 
 available_models = {
