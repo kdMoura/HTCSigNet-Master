@@ -1,10 +1,17 @@
 from .gpds import GPDSDataset
-from .mcyt import MCYTDataset
+#from .mcyt import MCYTDataset
 from .cedar import CedarDataset
-from .brazilian import BrazilianDataset, BrazilianDatasetWithoutSimpleForgeries
+#from .brazilian import BrazilianDataset, BrazilianDatasetWithoutSimpleForgeries
+from .bhsig260_bengali import BengaliDataset
+from .bhsig260_hindi import HindiDataset
+from .gpds_synth import GPDSSynthDataset
 
 available_datasets = {'gpds': GPDSDataset,
-                      'mcyt': MCYTDataset,
+					  'gpds_synth': GPDSSynthDataset,
+                      #'mcyt': MCYTDataset,
                       'cedar': CedarDataset,
-                      'brazilian': BrazilianDataset,
-                      'brazilian-nosimple': BrazilianDatasetWithoutSimpleForgeries}
+                      #'brazilian': BrazilianDataset,
+                      #'brazilian-nosimple': BrazilianDatasetWithoutSimpleForgeries,
+                      'bengali':BengaliDataset,
+                      'hindi':HindiDataset
+                      }

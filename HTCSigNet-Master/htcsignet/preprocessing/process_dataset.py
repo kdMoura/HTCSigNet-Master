@@ -57,11 +57,11 @@ def process_dataset(dataset: IterableDataset,
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Process datasets')
-    parser.add_argument('--dataset', choices=available_datasets.keys(), default='gpds',
+    parser.add_argument('--dataset', choices=available_datasets.keys(), required=True, #default='gpds',
                         help='The dataset type')
-    parser.add_argument('--path', default='../../data/GPDS/GPDS1_1000',
+    parser.add_argument('--path', required=True, #default='../../data/GPDS/GPDS1_1000',
                         help='Path to the folder containing the signatures')
-    parser.add_argument('--save-path', default="GPDS_1000_256X256.npz",
+    parser.add_argument('--save-path', required=True,#default="GPDS_1000_256X256.npz",
                         help='Path to save the numpy arrays')
     parser.add_argument('--image-size', nargs=2, type=int, default=(256, 256),
                         help='Image size (H x W)')
