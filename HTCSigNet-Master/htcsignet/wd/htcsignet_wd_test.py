@@ -1,6 +1,6 @@
 import sys
 
-sys.path.append("/home/debian/Workspace/HTCSigNet-master/")
+#sys.path.append("/home/debian/Workspace/HTCSigNet-master/")
 import torch
 from htcsignet.featurelearning.data import extract_features
 import htcsignet.featurelearning.models as models

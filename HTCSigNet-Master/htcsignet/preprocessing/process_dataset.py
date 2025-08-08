@@ -1,6 +1,6 @@
 import sys
 
-sys.path.append("/home/htcsignet/")
+#sys.path.append("/home/htcsignet/")
 import argparse
 import functools
 from typing import Tuple, Optional

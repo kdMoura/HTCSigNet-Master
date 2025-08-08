@@ -1,6 +1,6 @@
 import sys
 
-sys.path.append("/home/debian/Workspace/HTCSigNet/")
+#sys.path.append("/home/debian/Workspace/HTCSigNet/")
 import argparse
 import pathlib
 from collections import OrderedDict
