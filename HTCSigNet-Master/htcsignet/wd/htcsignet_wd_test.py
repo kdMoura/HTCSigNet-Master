@@ -56,6 +56,12 @@ def main(args):
 
     dev_set = get_subset(data, dev_users)
     # dev_features = extract_features(dev_set[0], base_model, args.batch_size, device, args.input_size)
+    
+    prototypical_sig = None
+    if args.protosig_path is not None:
+        prot_data = np.load(args.protosig_path)
+        prototypical_sig = prot_data['prototypes']
+    
     rng = np.random.RandomState(1234)
 
     eer_u_list = []
@@ -66,16 +72,28 @@ def main(args):
     FAR_random = []
     FAR_skilled = []
     for _ in range(args.folds):
-        classifiers, results = training.train_test_all_users(exp_set,
-                                                             dev_set,
-                                                             svm_type=args.svm_type,
-                                                             C=args.svm_c,
-                                                             gamma=args.svm_gamma,
-                                                             num_gen_train=args.gen_for_train,
-                                                             num_forg_from_exp=args.forg_from_exp,
-                                                             num_forg_from_dev=args.forg_from_dev,
-                                                             num_gen_test=args.gen_for_test,
-                                                             rng=rng)
+        if args.protosig_path is None:
+            classifiers, results = training.train_test_all_users(exp_set,
+                                                                 dev_set,
+                                                                 svm_type=args.svm_type,
+                                                                 C=args.svm_c,
+                                                                 gamma=args.svm_gamma,
+                                                                 num_gen_train=args.gen_for_train,
+                                                                 num_forg_from_exp=args.forg_from_exp,
+                                                                 num_forg_from_dev=args.forg_from_dev,
+                                                                 num_gen_test=args.gen_for_test,
+                                                                 exp_test_users=args.exp_test_users,
+                                                                 rng=rng)
+        else:
+            classifiers, results = training.train_test_all_users_with_protosig(exp_set,
+                                                                 dev_set,
+                                                                 svm_type=args.svm_type,
+                                                                 C=args.svm_c,
+                                                                 gamma=args.svm_gamma,
+                                                                 num_gen_train=args.gen_for_train,
+                                                                 num_gen_test=args.gen_for_test,
+                                                                 prototypical_sig=prototypical_sig,
+                                                                 rng=rng)
         this_eer_u, this_eer = results['all_metrics']['EER_userthresholds'], results['all_metrics']['EER']
         acc, frr, far_random, far_skilled = results['all_metrics']['mean_AUC'], results['all_metrics']['FRR'], \
             results['all_metrics']['FAR_random'], results['all_metrics']['FAR_skilled']
@@ -125,6 +143,10 @@ def parse_args():
     parser.add_argument('--gpu-idx', type=int, default=0)
     parser.add_argument('--batch-size', type=int, default=32)
     parser.add_argument('--folds', type=int, default=10)
+    
+    parser.add_argument('--protosig-path', type=str)
+    parser.add_argument('--exp-test-users', type=int, nargs=2, 
+            help='Range of users to be tested while all other are employed as random forgeries for training')
 
     return parser.parse_args()
 
