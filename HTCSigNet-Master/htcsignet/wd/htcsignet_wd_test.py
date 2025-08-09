@@ -99,9 +99,8 @@ def main(args):
             pickle.dump(all_results, f)
     return all_results
 
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
+def parse_args():
+     parser = argparse.ArgumentParser()
 
     parser.add_argument('-m', choices=models.available_models, default="htcsignet",
                         help='Model architecture', dest='model')
@@ -127,7 +126,11 @@ if __name__ == '__main__':
     parser.add_argument('--batch-size', type=int, default=32)
     parser.add_argument('--folds', type=int, default=10)
 
-    arguments = parser.parse_args()
+    return parser.parse_args()
+
+if __name__ == '__main__':
+
+    arguments = parse_args()
     print(arguments)
 
     main(arguments)

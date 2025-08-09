@@ -54,8 +54,7 @@ def process_dataset(dataset: IterableDataset,
              user_mapping=user_mapping,
              filenames=used_files)
 
-
-if __name__ == '__main__':
+def parse_args():
     parser = argparse.ArgumentParser(description='Process datasets')
     parser.add_argument('--dataset', choices=available_datasets.keys(), required=True, #default='gpds',
                         help='The dataset type')
@@ -66,7 +65,11 @@ if __name__ == '__main__':
     parser.add_argument('--image-size', nargs=2, type=int, default=(256, 256),
                         help='Image size (H x W)')
 
-    args = parser.parse_args()
+    return parser.parse_args()
+
+if __name__ == '__main__':
+
+    args = parse_args()
 
     ds = available_datasets[args.dataset]
     dataset = ds(args.path)
