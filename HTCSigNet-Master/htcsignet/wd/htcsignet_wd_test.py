@@ -100,7 +100,7 @@ def main(args):
     return all_results
 
 def parse_args():
-     parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser()
 
     parser.add_argument('-m', choices=models.available_models, default="htcsignet",
                         help='Model architecture', dest='model')
