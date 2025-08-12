@@ -1,8 +1,8 @@
 import numpy as np
 import functools
 from tqdm import tqdm
-from sigver.datasets.base import IterableDataset
-from sigver.preprocessing.normalize import preprocess_signature
+from htcsignet.datasets.base import IterableDataset
+from htcsignet.preprocessing.normalize import preprocess_signature
 from typing import Tuple, Callable, Dict, Union
 from multiprocessing import Pool
 

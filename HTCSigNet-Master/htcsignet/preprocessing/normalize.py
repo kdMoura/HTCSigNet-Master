@@ -75,10 +75,15 @@ def normalize_image(img: np.ndarray,
     # Find the center of mass
     binarized_image = blurred_image > threshold
     # Gpds,Cedar这些数据集图片包含噪声，并且像素值不只是0和255组合，用下面这行代码
-    r, c = np.where(binarized_image == 0)
+
     # 因为数据集BHSig260,UTSig特殊，图像已经是0和255的组合，即黑白图片，就不需要转化和去噪了，直接定位0的像素点(即笔记痕迹)来确定中心位置,用下面这行代码
     # 预处理完数据集就把下面这行代码注释掉，把上面这行代码打开，恢复到源码
-    #r, c = np.where(img == 0)
+
+    r, c = np.where(binarized_image == 0)
+    if len(r) == 0: # Image already binarized
+        r, c = np.where(img == 0)
+    if len(r) == 0:
+        raise ValueError("No zero-valued pixels found in either binarized or original image.")
     r_center = int(r.mean() - r.min())
     c_center = int(c.mean() - c.min())
 

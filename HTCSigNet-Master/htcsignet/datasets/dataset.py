@@ -78,8 +78,8 @@ class CedarDataset(IterableDataset):
     """ Helper class to load the CEDAR dataset
     """
 
-    def __init__(self):
-        self.path = "E:\研究生\学习资料\签名鉴定\几个数据集\CEDAR"
+    def __init__(self, path):
+        self.path = path #"E:\研究生\学习资料\签名鉴定\几个数据集\CEDAR"
         self.users = list(range(1, 55 + 1))
 
     @property
