@@ -1,9 +1,10 @@
 import numpy as np
 import functools
 from tqdm import tqdm
-from htcsignet.datasets.base import IterableDataset
-from htcsignet.preprocessing.normalize import preprocess_signature
+from sigver.datasets.base import IterableDataset
+from sigver.preprocessing.normalize import preprocess_signature
 from typing import Tuple, Callable, Dict, Union
+from multiprocessing import Pool
 
 
 def load_dataset(path: str) -> Tuple[np.ndarray, np.ndarray, np.ndarray, Dict, np.ndarray]:
@@ -29,7 +30,6 @@ def load_dataset(path: str) -> Tuple[np.ndarray, np.ndarray, np.ndarray, Dict, n
     with np.load(path, allow_pickle=True) as data:
         x, y, yforg = data['x'], data['y'], data['yforg']
         user_mapping, filenames = data['user_mapping'], data['filenames']
-
     return x, y, yforg, user_mapping, filenames
 
 
@@ -125,7 +125,27 @@ def process_dataset_images(dataset: IterableDataset,
     for i, user in enumerate(tqdm(users)):
         # Genuine signatures
 
-        user_gen_data = [(preprocess_fn(img), filename) for (img, filename) in dataset.iter_genuine(user)]
+        # user_gen_data = [(preprocess_fn(img), filename) for (img, filename) in dataset.iter_genuine(user)]
+        user_gen_data = []
+        user_forg_data = []
+
+        p = Pool(1)
+        user_gen_data = [(p.apply_async(preprocess_fn, args=(img,)), filename) for (img, filename) in
+                         dataset.iter_genuine(user)]
+        user_forg_data = [(p.apply_async(preprocess_fn, args=(img,)), filename) for (img, filename) in
+                          dataset.iter_forgery(user)]
+        # for (img, filename) in dataset.iter_genuine(user):
+        #     user_gen_data.append((p.apply_async(preprocess_fn,args=(img,)),filename))
+        # for (img, filename) in dataset.iter_forgery(user):
+        #     user_forg_data.append((p.apply_async(preprocess_fn,args=(img,)),filename))
+        print("forg_data", len(user_forg_data))
+        p.close()
+        p.join()
+        for j in range(len(user_gen_data)):
+            user_gen_data[j] = (user_gen_data[j][0]._value, user_gen_data[j][1])
+        for j in range(len(user_forg_data)):
+            user_forg_data[j] = (user_forg_data[j][0]._value, user_forg_data[j][1])
+
         gen_imgs, gen_filenames = zip(*user_gen_data)
         new_img_count = len(gen_imgs)
 
@@ -137,7 +157,7 @@ def process_dataset_images(dataset: IterableDataset,
         N += new_img_count
 
         # Skilled forgeries
-        user_forg_data = [(preprocess_fn(img), filename) for (img, filename) in dataset.iter_forgery(user)]
+        # user_forg_data = [(preprocess_fn(img), filename) for (img, filename) in dataset.iter_forgery(user)]
 
         if len(user_forg_data) > 0:
             forg_imgs, forg_filenames = zip(*user_forg_data)
@@ -150,19 +170,19 @@ def process_dataset_images(dataset: IterableDataset,
             used_files += forg_filenames
             N += new_img_count
 
-        # Simple forgeries
-        user_forg_data = [(preprocess_fn(img), filename) for (img, filename) in dataset.iter_simple_forgery(user)]
-
-        if len(user_forg_data) > 0:
-            forg_imgs, forg_filenames = zip(*user_forg_data)
-            new_img_count = len(forg_imgs)
-
-            indexes = slice(N, N + new_img_count)
-            x[indexes] = forg_imgs
-            yforg[indexes] = 2  # Simple forgeries
-            y[indexes] = i
-            used_files += forg_filenames
-            N += new_img_count
+        # # Simple forgeries
+        # user_forg_data = [(preprocess_fn(img), filename) for (img, filename) in dataset.iter_simple_forgery(user)]
+        #
+        # if len(user_forg_data) > 0:
+        #     forg_imgs, forg_filenames = zip(*user_forg_data)
+        #     new_img_count = len(forg_imgs)
+        #
+        #     indexes = slice(N, N + new_img_count)
+        #     x[indexes] = forg_imgs
+        #     yforg[indexes] = 2  # Simple forgeries
+        #     y[indexes] = i
+        #     used_files += forg_filenames
+        #     N += new_img_count
 
         user_mapping[i] = user
 

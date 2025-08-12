@@ -40,10 +40,10 @@ def process_dataset(dataset: IterableDataset,
     preprocess_fn = functools.partial(preprocess_signature,
                                       canvas_size=dataset.maxsize,
                                       img_size=img_size,
-                                      input_size=img_size)  # Don't crop it now
+                                      input_size=img_size) # Don't crop it now
 
     if subset is None:
-        subset = slice(None)  # Use all
+        subset = slice(None) # Use all
     processed = process_dataset_images(dataset, preprocess_fn, img_size, subset)
     x, y, yforg, user_mapping, used_files = processed
 

@@ -5,8 +5,8 @@ from typing import Tuple
 
 def preprocess_signature(img: np.ndarray,
                          canvas_size: Tuple[int, int],
-                         img_size: Tuple[int, int] =(256, 256),
-                         input_size: Tuple[int, int] =(256, 256)) -> np.ndarray:
+                         img_size: Tuple[int, int] = (256, 256),
+                         input_size: Tuple[int, int] = (224, 224)) -> np.ndarray:
     """ Pre-process a signature image, centering it in a canvas, resizing the image and cropping it.
 
     Parameters
@@ -74,7 +74,11 @@ def normalize_image(img: np.ndarray,
 
     # Find the center of mass
     binarized_image = blurred_image > threshold
+    # Gpds,Cedar这些数据集图片包含噪声，并且像素值不只是0和255组合，用下面这行代码
     r, c = np.where(binarized_image == 0)
+    # 因为数据集BHSig260,UTSig特殊，图像已经是0和255的组合，即黑白图片，就不需要转化和去噪了，直接定位0的像素点(即笔记痕迹)来确定中心位置,用下面这行代码
+    # 预处理完数据集就把下面这行代码注释掉，把上面这行代码打开，恢复到源码
+    #r, c = np.where(img == 0)
     r_center = int(r.mean() - r.min())
     c_center = int(c.mean() - c.min())
 
@@ -134,28 +138,28 @@ def normalize_image(img: np.ndarray,
 
 
 def remove_background(img: np.ndarray) -> np.ndarray:
-        """ Remove noise using OTSU's method.
+    """ Remove noise using OTSU's method.
 
-        Parameters
-        ----------
-        img : np.ndarray
-            The image to be processed
+    Parameters
+    ----------
+    img : np.ndarray
+        The image to be processed
 
-        Returns
-        -------
-        np.ndarray
-            The image with background removed
-        """
+    Returns
+    -------
+    np.ndarray
+        The image with background removed
+    """
 
-        img = img.astype(np.uint8)
-        # Binarize the image using OTSU's algorithm. This is used to find the center
-        # of mass of the image, and find the threshold to remove background noise
-        threshold = filters.threshold_otsu(img)
+    img = img.astype(np.uint8)
+    # Binarize the image using OTSU's algorithm. This is used to find the center
+    # of mass of the image, and find the threshold to remove background noise
+    threshold = filters.threshold_otsu(img)
 
-        # Remove noise - anything higher than the threshold. Note that the image is still grayscale
-        img[img > threshold] = 255
+    # Remove noise - anything higher than the threshold. Note that the image is still grayscale
+    img[img > threshold] = 255
 
-        return img
+    return img
 
 
 def resize_image(img: np.ndarray,
@@ -195,10 +199,10 @@ def resize_image(img: np.ndarray,
 
     # Crop to exactly the desired new_size, using the middle of the image:
     if width_ratio > height_ratio:
-        start = int(round((resize_width-width)/2.0))
+        start = int(round((resize_width - width) / 2.0))
         return img[:, start:start + width]
     else:
-        start = int(round((resize_height-height)/2.0))
+        start = int(round((resize_height - height) / 2.0))
         return img[start:start + height, :]
 
 
