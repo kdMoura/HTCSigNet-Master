@@ -252,21 +252,25 @@ class BHSigHDataset(IterableDataset):
 
     def iter_genuine(self, user):
         """ Iterate over genuine signatures for the given user"""
-
-        files = ['{}{}{}/H-S-{}-G-{}{}.tif'.format(int(user / 100 % 10), int(user / 10 % 10), int(user % 10), user,
-                                                   int(img / 10 % 10), int(img % 10)) for img in range(1, 24 + 1)]
-        for f in files:
-            full_path = os.path.join(self.path, "Hindi", f)
+        
+        user_folder = os.path.join(self.path, 'Hindi','{:03d}'.format(user))
+        all_files = sorted(os.listdir(user_folder))
+        user_genuine_files = filter(lambda x: '-G-' in x, all_files)
+        for f in user_genuine_files:
+            full_path = os.path.join(user_folder, f)
+            #print('DEBUG: ',full_path)
             img = imread(full_path, as_gray=True)
             yield img_as_ubyte(img), f
 
     def iter_forgery(self, user):
         """ Iterate over skilled forgeries for the given user"""
 
-        files = ['{}{}{}/H-S-{}-F-{}{}.tif'.format(int(user / 100 % 10), int(user / 10 % 10), int(user % 10), user,
-                                                   int(img / 10 % 10), int(img % 10)) for img in range(1, 30 + 1)]
-        for f in files:
-            full_path = os.path.join(self.path, "Hindi", f)
+        user_folder = os.path.join(self.path, 'Hindi','{:03d}'.format(user))
+        all_files = sorted(os.listdir(user_folder))
+        user_forgery_files = filter(lambda x: '-F-' in x, all_files)
+        for f in user_forgery_files:
+            full_path = os.path.join(user_folder, f)
+            #print('DEBUG: ',full_path)
             img = imread(full_path, as_gray=True)
             yield img_as_ubyte(img), f
 
